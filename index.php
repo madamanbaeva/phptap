@@ -4,25 +4,38 @@ setlocale(LC_ALL, "russian");
 $day = strftime('%d');
 $mon = strftime('%B');
 $year = strftime('%Y');
+// Windows-1251 -> UTF-8 (чтобы не было знаков вопроса)
+if (!mb_check_encoding($mon, 'UTF-8')) {
+    $mon = iconv('CP1251', 'UTF-8', $mon);
+}
 
 /*
- * Получаем текущий час от 00 до 23 в виде строки
- * и преобразуем его в целое число от 0 до 23.
+ * Ағымдағы сағатты 00-ден 23-ке дейінгі жол түрінде аламыз
+ * және оны бүтін санға түрлендіреміз.
  */
 $hour = (int) strftime('%H');
-$welcome = ''; // Инициализируем переменную для приветствия
+$welcome = ''; // Сәлемдесу үшін айнымалы
 
 if ($hour >= 0 && $hour < 6) {
-  $welcome = 'Доброй ночи';
+    $welcome = 'Доброй ночи';
 } elseif ($hour >= 6 && $hour < 12) {
-  $welcome = 'Доброе утро';
+    $welcome = 'Доброе утро';
 } elseif ($hour >= 12 && $hour < 18) {
-  $welcome = 'Добрый день';
+    $welcome = 'Добрый день';
 } elseif ($hour >= 18 && $hour <= 23) {
-  $welcome = 'Добрый вечер';
+    $welcome = 'Добрый вечер';
 } else {
-  $welcome = 'Доброе время суток';
+    $welcome = 'Доброе время суток';
 }
+
+// Инициализация массива
+$leftMenu = [
+  ['link'=>'Домой', 'href'=>'index.php'],
+  ['link'=>'О нас', 'href'=>'about.php'],
+  ['link'=>'Контакты', 'href'=>'contact.php'],
+  ['link'=>'Таблица умножения', 'href'=>'table.php'],
+  ['link'=>'Калькулятор', 'href'=>'calc.php']
+];
 ?>
 <!DOCTYPE html>
 <html>
@@ -48,9 +61,7 @@ if ($hour >= 0 && $hour < 6) {
     <!-- Заголовок -->
     <!-- Область основного контента -->
     <blockquote>
-      <?php
-      echo 'Сегодня ', $day, ' число, ', $mon, ' месяц, ', $year, ' год.';
-      ?>
+      <?php echo 'Сегодня ', $day, ' число, ', $mon, ' месяц, ', $year, ' год.'; ?>
     </blockquote>
     <h3>Зачем мы ходим в школу?</h3>
     <p>
@@ -69,18 +80,13 @@ if ($hour >= 0 && $hour < 6) {
     <!-- Навигация -->
     <h2>Навигация по сайту</h2>
     <!-- Меню -->
-    <ul>
-      <li><a href='index.php'>Домой</a>
-      </li>
-      <li><a href='about.php'>О нас</a>
-      </li>
-      <li><a href='contact.php'>Контакты</a>
-      </li>
-      <li><a href='table.php'>Таблица умножения</a>
-      </li>
-      <li><a href='calc.php'>Калькулятор</a>
-      </li>
-    </ul>
+    <?php
+    echo '<ul>';
+    foreach ($leftMenu as $item) {
+        echo "<li><a href='{$item['href']}'>{$item['link']}</a></li>";
+    }
+    echo '</ul>';
+    ?>
     <!-- Меню -->
     <!-- Навигация -->
   </div>
